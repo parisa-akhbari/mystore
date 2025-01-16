@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+<!-- Header-->
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">تایید نهایی</h1>
+            <p class="lead fw-normal text-white-50 mb-0">یکبار دیگه چک کنید همه چی درست باشه</p>
+        </div>
+    </div>
+</header>
+<br><br>
+<div class="container">
+    <div class="row">
+        <center>
+            <div class="col-10">
+                <div class="card">
+                    <div class="card-header">
+                      خلاصه سفارشات شما
+                    </div>
+                    <div class="card-body">
+                     {% for product in cart_products %}
+                       {{product.name}}<br>
+                       <small>
+                        تعداد :
+                        {% for key,value in quantities.items %}
+                           {% if key == product.id|slugify %}
+                               {{value}}
+                            {% endif %}
+                        {% endfor %}
+                       </small><br>
+                     <small>
+                        قیمت :
+                    {% if product.is_sale %}
+                        {{product.sale_price | intcomma}}
+                    {% else %}
+                        {{product.price | intcomma}}
+                    {% endif %}
+                     </small><hr>
+                     {% endfor %}
+                     <strong>مجموع کل سفارشات : {{total | intcomma}}</strong><br><br>
+                    </div>
+                </div>
+                <br>
+                <div class="card">
+                    <div class="card-header">
+                      مشخصات ارسال
+                    </div>
+                    <div class="card-body">
+                    <form action="{% url 'process_order' %}" method="POST">
+                        {% csrf_token %}
+                      نام و نام خانوادگی : {{shipping_info.new_full_name}}<br>
+                      ایمیل : {{shipping_info.new_email}}<br>
+                      آدرس 1 : {{shipping_info.new_address1}}<br>
+                      آدرس 2 : {{shipping_info.new_address2}}<br>
+                      شهر : {{shipping_info.new_city}}<br>
+                      منطقه : {{shipping_info.new_state}}<br>
+                      کد پستی : {{shipping_info.new_zipcode}}<br>
+                      کشور : {{shipping_info.new_country}}
+                    </div>
+                </div>
+            </div>
+            <br>
+                    <button type="submit" class="btn btn-sm btn-outline-secondary"> سفارش و پرداخت</button><br><br>
+                    </form>
+        </center>
+    </div>
+</div>
+{% endblock %}
